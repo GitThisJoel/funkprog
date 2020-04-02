@@ -1,0 +1,3 @@
+In this assignment you will use Haskell to solve a fundamental theoretical
+problem from combinatorics. On the way you will learn to use memoization.
+The assignment is to be completed in pairs. 
