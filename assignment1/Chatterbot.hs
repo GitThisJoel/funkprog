@@ -105,7 +105,7 @@ reductionsApply _ = id
 
 -- Replaces a wildcard in a list with the list given as the third argument
 substitute :: Eq a => a -> [a] -> [a] -> [a]
-substitute wc p s = concat [if c == wc then s else [c] | c <- p]
+substitute wc t s = concat [if c == wc then s else [c] | c <- t]
 
 
 
