@@ -126,7 +126,7 @@ singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
 singleWildcardMatch [] [] = Just []
 singleWildcardMatch _ [] = Nothing
 singleWildcardMatch [] _ = Nothing
-singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs) 
+singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs)
 
 longerWildcardMatch [] [] = Just []
 longerWildcardMatch _ [] = Nothing
@@ -155,8 +155,8 @@ matchCheck = matchTest == Just testSubstitutions
 
 -- Applying a single pattern
 transformationApply :: Eq a => a -> ([a] -> [a]) -> [a] -> ([a], [a]) -> Maybe [a]
-transformationApply _ _ _ _ = Nothing
-{- TO BE WRITTEN -}
+transformationApply _ _ [] _ = Nothing
+transformationApply wc f cs p = substitute wc (snd p) (match wc cs (fst p))
 
 
 -- Applying a list of patterns until one succeeds
