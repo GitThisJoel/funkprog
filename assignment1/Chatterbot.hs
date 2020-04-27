@@ -126,7 +126,7 @@ singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
 singleWildcardMatch [] [] = Just []
 singleWildcardMatch _ [] = Nothing
 singleWildcardMatch [] _ = Nothing
-singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs)  -- (match x ps xs)
+singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs) 
 
 longerWildcardMatch [] [] = Just []
 longerWildcardMatch _ [] = Nothing
