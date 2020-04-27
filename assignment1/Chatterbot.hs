@@ -112,16 +112,26 @@ substitute wc t s = concat [if c == wc then s else [c] | c <- t]
 -- Tries to match two lists. If they match, the result consists of the sublist
 -- bound to the wildcard in the pattern list.
 match :: Eq a => a -> [a] -> [a] -> Maybe [a]
-match _ _ _ = Nothing
-{- TO BE WRITTEN -}
+match _ [] [] = Just []
+match _ [] _ = Nothing
+match _ _ [] = Nothing
 
+match wc (c1:p) (c2:s)
+  | wc == c1 = singleWildcardMatch (c1:p) (c2:s) `orElse` longerWildcardMatch (c1:p) (c2:s)
+  | c1 /= c2  = Nothing
+  | otherwise = match wc p s
 
 -- Helper function to match
 singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
-singleWildcardMatch (wc:ps) (x:xs) = Nothing
-{- TO BE WRITTEN -}
-longerWildcardMatch (wc:ps) (x:xs) = Nothing
-{- TO BE WRITTEN -}
+singleWildcardMatch [] [] = Just []
+singleWildcardMatch _ [] = Nothing
+singleWildcardMatch [] _ = Nothing
+singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs)  -- (match x ps xs)
+
+longerWildcardMatch [] [] = Just []
+longerWildcardMatch _ [] = Nothing
+longerWildcardMatch [] _ = Nothing
+longerWildcardMatch (wc:ps) (x:xs) = mmap (x :) (match wc (wc:ps) xs)
 
 
 
