@@ -160,5 +160,12 @@ transformationApply wc f s pres = mmap (substitute wc (snd pres)) (mmap f (match
 
 -- Applying a list of patterns until one succeeds
 transformationsApply :: Eq a => a -> ([a] -> [a]) -> [([a], [a])] -> [a] -> Maybe [a]
-transformationsApply _ _ _ _ = Nothing
-{- TO BE WRITTEN -}
+transformationsApply _ _ [] _ = Nothing
+transformationsApply wc f (p:pres) s =
+  if (transformationApply wc f s p) /= Nothing then
+    (transformationApply wc f s p)
+  else
+    transformationsApply wc f pres s
+
+-- Denna lösning fungerar men jag tycker den är ful, finns det andra sätt att
+-- lösa denna på. Eventuellt med typ `mmap`?
