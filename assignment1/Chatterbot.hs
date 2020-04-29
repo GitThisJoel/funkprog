@@ -3,6 +3,8 @@ import Utilities
 import System.Random
 import Data.Char
 
+-- hej jag tycker om dig din läckra strut
+
 chatterbot :: String -> [(String, [String])] -> IO ()
 chatterbot botName botRules = do
     putStrLn ("\n\nHi! I am " ++ botName ++ ". How are you?")
