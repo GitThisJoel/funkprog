@@ -122,14 +122,14 @@ match wc (c1:p) (c2:s)
 
 -- Helper function to match
 singleWildcardMatch, longerWildcardMatch :: Eq a => [a] -> [a] -> Maybe [a]
-singleWildcardMatch [] [] = Just []
-singleWildcardMatch _ [] = Nothing
-singleWildcardMatch [] _ = Nothing
+-- singleWildcardMatch [] [] = Just []
+-- singleWildcardMatch _ [] = Nothing
+-- singleWildcardMatch [] _ = Nothing
 singleWildcardMatch (wc:ps) (x:xs) = mmap (const [x]) (match wc ps xs)
 
-longerWildcardMatch [] [] = Just []
-longerWildcardMatch _ [] = Nothing
-longerWildcardMatch [] _ = Nothing
+-- longerWildcardMatch [] [] = Just []
+-- longerWildcardMatch _ [] = Nothing
+-- longerWildcardMatch [] _ = Nothing
 longerWildcardMatch (wc:ps) (x:xs) = mmap (x :) (match wc (wc:ps) xs)
 
 
