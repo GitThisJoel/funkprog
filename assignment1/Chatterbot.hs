@@ -30,8 +30,7 @@ stateOfMind :: BotBrain -> IO (Phrase -> Phrase)
 stateOfMind _ = return id
 
 rulesApply :: [PhrasePair] -> Phrase -> Phrase
-{- TO BE WRITTEN -}
-rulesApply _ = id
+rulesApply t p = try (transformationsApply "*" id t) p
 
 reflect :: Phrase -> Phrase
 reflect [] = []
