@@ -4,6 +4,7 @@ import System.Random
 import Data.Char
 
 -- hej jag tycker om dig din läckra strut
+-- tjåfften de gay
 
 chatterbot :: String -> [(String, [String])] -> IO ()
 chatterbot botName botRules = do
@@ -99,7 +100,7 @@ reduce :: Phrase -> Phrase
 reduce = reductionsApply reductions
 
 reductionsApply :: [PhrasePair] -> Phrase -> Phrase
-reductionsApply reds = fix $ try $ transformationsApply "*" id reds 
+reductionsApply reds = fix $ try $ transformationsApply "*" id reds
 
 
 -------------------------------------------------------
