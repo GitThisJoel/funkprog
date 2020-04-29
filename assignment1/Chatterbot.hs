@@ -97,8 +97,7 @@ reduce :: Phrase -> Phrase
 reduce = reductionsApply reductions
 
 reductionsApply :: [PhrasePair] -> Phrase -> Phrase
-{- TO BE WRITTEN -}
-reductionsApply _ = id
+reductionsApply reds = fix $ try $ transformationsApply "*" id reds 
 
 
 -------------------------------------------------------
