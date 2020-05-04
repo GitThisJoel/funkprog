@@ -14,27 +14,31 @@ scoreSpace = 0
 -- Input: Two strings s and t, and values for scoreMatch, scoreMismatch, and scoreSpace.
 -- Output: All optimal alignments between s and t.
 optimalAlignments :: Int -> Int -> Int -> String -> String -> [AlignmentType]
-optimalAlignments s t scoreMa scoreMi scoreSp = do
-    similarityScore s t 
+optimalAlignments scoreMa scoreMi scoreSp s t = do
     let scoreMatch = scoreMa
     let scoreMismatch = scoreMi
     let scoreSpace = scoreSp
+    similarityScore s t 
+    ("hej", "hej")
 
 
 -- Helper functions to similarityScore
-sim :: ([a], [a]) -> Int
-sim ((x:xs),(y:ys)) = max {sim (xs,ys) + score (x,y), 
-                          sim (xs,(y:ys)) + score (x,'-'), 
-                          sim ((x:xs),ys) + score ('-',y)}
+sim :: [a] -> [a] -> Int
+sim (x:xs) (y:ys) = max [sim xs ys + score x y, 
+                          sim xs (y:ys) + score x '-', 
+                          sim (x:xs) ys + score '-' y]
 
-score :: (a,a) -> Int
-score(x,'-') = score('-',y) = scoreSpace
-score(x,y) = scoreMatch, if x == y
-             scoreMismatch, if x /= y
+-- sim ((x:xs),(y:ys)) = sim (xs,ys) + score (x,y)
+score :: a -> a -> Int
+score c1 c2 
+    | c1 == '-' = scoreSpace
+    | c2 == '-' = scoreSpace
+    | c1 == c2 = scoreMatch
+    | otherwise = scoreMismatch
 
 -- returns the score of the optimal alignment of the two strings
 similarityScore :: String -> String -> Int
-similarityScore string1 string2 = sim (string1, string2)
+similarityScore string1 string2 = sim string1 string2
 
 
 -- What does this function do?
