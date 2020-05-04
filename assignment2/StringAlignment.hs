@@ -7,16 +7,25 @@
 
 type AlignmentType = (String,String)
 
+scoreMatch = 0
+scoreMismatch = 0
+scoreSpace = 0
+
 -- Input: Two strings s and t, and values for scoreMatch, scoreMismatch, and scoreSpace.
 -- Output: All optimal alignments between s and t.
 optimalAlignments :: Int -> Int -> Int -> String -> String -> [AlignmentType]
-optimalAlignments _ _ _ _ _ = []
+optimalAlignments s t scoreMa scoreMi scoreSp = do
+    similarityScore s t 
+    let scoreMatch = scoreMa
+    let scoreMismatch = scoreMi
+    let scoreSpace = scoreSp
 
--- helper functions to similarityScore
+
+-- Helper functions to similarityScore
 sim :: ([a], [a]) -> Int
-sim((x:xs),(y:ys)) = max {sim(xs,ys) + score(x,y),
-                          sim(xs,(y:ys)) + score(x,'-'),
-                          sim((x:xs),ys) + score('-',y)}
+sim ((x:xs),(y:ys)) = max {sim (xs,ys) + score (x,y), 
+                          sim (xs,(y:ys)) + score (x,'-'), 
+                          sim ((x:xs),ys) + score ('-',y)}
 
 score :: (a,a) -> Int
 score(x,'-') = score('-',y) = scoreSpace
