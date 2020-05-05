@@ -25,13 +25,14 @@ optimalAlignments :: Int -> Int -> Int -> String -> String -> [AlignmentType]
 optimalAlignments scoreMa scoreMi scoreSp s t = []
 
 
+-- 2a.
 -- returns the score of the optimal alignment of the two strings
 similarityScore :: String -> String -> Int
 similarityScore string1 string2 = sim string1 string2
 
 -- Helper functions to similarityScore
 sim :: [Char] -> [Char] -> Int
-sim [] [] = 0
+sim [] [] = 0   
 sim (x:xs) [] = scoreSpace
 sim [] (y:ys) = scoreSpace
 sim (x:xs) (y:ys) = maximum [sim xs ys + (score x y),
@@ -48,6 +49,7 @@ score c1 c2
     | otherwise = scoreMismatch
 
 
+-- 2b.
 -- What does this function do?
 -- The function takes two heads and a list with tuples, the elements in the
 -- tupels are also lists. For all elements in the list it adds the first head to
@@ -57,12 +59,13 @@ attachHeads :: a -> a -> [([a],[a])] -> [([a],[a])]
 attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
 
+-- 2c.
 -- returns all maximum values in a list given by a function
 maximaBy :: Ord b => (a -> b) -> [a] -> [a]
 maximaBy valueFcn xs = [a | a <- xs, valueFcn a == maxList] where
     maxList = maximum $ map valueFcn xs
 
-
+-- 2d.
 -- returns a list of all optimal alignments between string1 and string2
 optAlignments :: String -> String -> [AlignmentType]
 optAlignments _ _ = []
@@ -73,22 +76,13 @@ opt [] _ = []
 opt _ [] = []   
 opt xs ys = maximaBy makeScore (optW xs ys)
 
+optW :: String -> String -> [AlignmentType]
 optW [] [] = [("","")]
 optW (x:xs) [] = attachHeads x '-' (optW xs [])
 optW [] (y:ys) = attachHeads '-' y (optW [] ys)
-optW (x:xs) (y:ys) = concat [attachHeads x y (optW xs ys),
-                            attachHeads '-' y (optW (x:xs) ys),
-                            attachHeads x '-' (optW xs (y:ys))]
-
--- optW :: String -> String -> [AlignmentType]
--- optW [] [] = [([],[])]
--- optW (x:xs) [] = attachHeads x '-' (optW xs [])
--- optW [] (y:ys) = attachHeads '-' y (optW [] ys)
--- optW (x:xs) (y:ys) = concat [
---     attachHeads x y (optW xs ys),
---     attachHeads x '-' (optW xs (y:ys)),
---     attachHeads '-' y (optW (x:xs) ys)]
-
+optW (x:xs) (y:ys) = concat [ attachHeads x   y (optW xs ys),
+                              attachHeads '-' y (optW (x:xs) ys),
+                              attachHeads x '-' (optW xs (y:ys))]
 
 -- helper function to opt, calculates the score of two words 
 makeScore :: AlignmentType -> Int 
@@ -96,7 +90,9 @@ makeScore ([], _) = 0
 makeScore (_, []) = 0
 makeScore ((x:xs), (y:ys)) = score x y  + makeScore (xs, ys)
 
-
+-- 2e.
 -- should output to the screen in a readable fashion
--- outputOptAlignments string1 string2
+outputOptAlignments :: String -> String -> IO ()
+outputOptAlignments s1 s2 = putStrLn s1
+
 -------------------------------------------------------------------
