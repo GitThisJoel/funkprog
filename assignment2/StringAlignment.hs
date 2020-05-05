@@ -8,8 +8,7 @@
 module StringAlignment where
 import Data.Char
 
---------------------------------------------------------------------------------
--- Global variables and types
+-- Global variables and types ----------------------------------------------- --
 type AlignmentType = (String,String)
 
 scoreMatch = 0
@@ -32,10 +31,11 @@ similarityScore string1 string2 = sim string1 string2
 
 -- Helper functions to similarityScore
 sim :: [Char] -> [Char] -> Int
-sim [] _ = 0
-sim _ [] = 0
+sim [] [] = 0
+sim (x:xs) [] = scoreSpace
+sim [] (y:ys) = scoreSpace
 sim (x:xs) (y:ys) = maximum [sim xs ys + (score x y),
-                             sim xs (y:ys) + (score x '-'),
+                             sim xs (y:ys) + (score x '-'), 
                              sim (x:xs) ys + (score '-' y)]
 
 
@@ -66,18 +66,36 @@ maximaBy valueFcn xs = [a | a <- xs, valueFcn a == maxList] where
 -- returns a list of all optimal alignments between string1 and string2
 optAlignments :: String -> String -> [AlignmentType]
 optAlignments _ _ = []
-optAlignments string1 string2 =
+-- optAlignments string1 string2 =
+
+opt :: String -> String -> [AlignmentType]
+opt [] _ = []
+opt _ [] = []   
+opt xs ys = maximaBy makeScore (optW xs ys)
+
+optW [] [] = [("","")]
+optW (x:xs) [] = attachHeads x '-' (optW xs [])
+optW [] (y:ys) = attachHeads '-' y (optW [] ys)
+optW (x:xs) (y:ys) = concat [attachHeads x y (optW xs ys),
+                            attachHeads '-' y (optW (x:xs) ys),
+                            attachHeads x '-' (optW xs (y:ys))]
+
+-- optW :: String -> String -> [AlignmentType]
+-- optW [] [] = [([],[])]
+-- optW (x:xs) [] = attachHeads x '-' (optW xs [])
+-- optW [] (y:ys) = attachHeads '-' y (optW [] ys)
+-- optW (x:xs) (y:ys) = concat [
+--     attachHeads x y (optW xs ys),
+--     attachHeads x '-' (optW xs (y:ys)),
+--     attachHeads '-' y (optW (x:xs) ys)]
 
 
+-- helper function to opt, calculates the score of two words 
+makeScore :: AlignmentType -> Int 
+makeScore ([], _) = 0
+makeScore (_, []) = 0
+makeScore ((x:xs), (y:ys)) = score x y  + makeScore (xs, ys)
 
--- vi kommer typ behöva dena kod för att lösa optAlignments
-
--- sim :: [Char] -> [Char] -> Int
--- sim [] _ = 0
--- sim _ [] = 0
--- sim (x:xs) (y:ys) = maximaBy [sim xs ys + (score x y),
---                              sim xs (y:ys) + (score x '-'),
---                              sim (x:xs) ys + (score '-' y)]
 
 -- should output to the screen in a readable fashion
 -- outputOptAlignments string1 string2
