@@ -5,7 +5,7 @@
 -- Victor Winkelmann (and vi6253wi-s) --------------------------------------- --
 -- -------------------------------------------------------------------------- --
 
-module StringAlignment where 
+module StringAlignment where
 import Data.Char
 
 type AlignmentType = (String,String)
@@ -25,8 +25,8 @@ optimalAlignments scoreMa scoreMi scoreSp s t = []
 sim :: [Char] -> [Char] -> Int
 sim [] _ = 0
 sim _ [] = 0
-sim (x:xs) (y:ys) = maximum [sim xs ys + (score x y), 
-                             sim xs (y:ys) + (score x '-'), 
+sim (x:xs) (y:ys) = maximum [sim xs ys + (score x y),
+                             sim xs (y:ys) + (score x '-'),
                              sim (x:xs) ys + (score '-' y)]
 
 
@@ -34,7 +34,7 @@ sim (x:xs) (y:ys) = maximum [sim xs ys + (score x y),
 score :: Char -> Char -> Int
 score '-' _ = scoreSpace
 score _ '-' = scoreSpace
-score c1 c2 
+score c1 c2
     | c1 == c2 = scoreMatch
     | otherwise = scoreMismatch
 
@@ -46,10 +46,10 @@ similarityScore string1 string2 = sim string1 string2
 
 
 -- What does this function do?
--- The function takes two heads and a list with tuples, the elements in the tupels 
--- are also lists. For all elements in the list it adds the first head to the first 
--- element in the tuple as a new head to that list. It also does the same for the 
--- second element in all the tuples but with the second head. 
+-- The function takes two heads and a list with tuples, the elements in the
+-- tupels are also lists. For all elements in the list it adds the first head to
+--  the first element in the tuple as a new head to that list. It also does the
+-- same for the second element in all the tuples but with the second head.
 attachHeads :: a -> a -> [([a],[a])] -> [([a],[a])]
 attachHeads h1 h2 aList = [(h1:xs,h2:ys) | (xs,ys) <- aList]
 
