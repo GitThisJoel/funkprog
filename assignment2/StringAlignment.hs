@@ -5,6 +5,11 @@
 -- Victor Winkelmann (and vi6253wi-s) --------------------------------------- --
 -- -------------------------------------------------------------------------- --
 
+-- Which parts of your code / functions were the hardest to write and why?,
+-- Which parts of your code / functions are you the most proud of,
+
+-- -------------------------------------------------------------------------- --
+
 module StringAlignment where
 import Data.Char
 
@@ -86,6 +91,7 @@ makeScore ([], _) = 0
 makeScore (_, []) = 0
 makeScore ((x:xs), (y:ys)) = score x y  + makeScore (xs, ys)
 
+
 -- 2e.
 -- should output to the screen in a readable fashion
 outputOptAlignments :: String -> String -> IO ()
@@ -95,7 +101,17 @@ outputOptAlignments s1 s2 = do
     putStrLn (printAll optAli)
     putStrLn ("There were " ++ (show $ length optAli) ++ " optimal alignments!")
       where printAll optAli = foldl1 (++) (map printFormat optAli)
+
 printFormat :: AlignmentType -> String
 printFormat at = ((fst at) ++ "\n" ++ (snd at) ++ "\n\n")
 
 -------------------------------------------------------------------
+
+-- 3.
+type OptAlignmentType = (Int, [AlignmentType])
+
+-- need to optimise similarityScore and optAlignment
+
+fastSimilarityScore :: String -> String -> Int
+
+fastOptAlignment :: String -> String -> OptAlignmentType
