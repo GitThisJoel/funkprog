@@ -32,11 +32,11 @@ similarityScore string1 string2 = sim string1 string2
 
 -- Helper functions to similarityScore
 sim :: [Char] -> [Char] -> Int
-sim [] [] = 0   
+sim [] [] = 0
 sim (x:xs) [] = scoreSpace
 sim [] (y:ys) = scoreSpace
 sim (x:xs) (y:ys) = maximum [sim xs ys + (score x y),
-                             sim xs (y:ys) + (score x '-'), 
+                             sim xs (y:ys) + (score x '-'),
                              sim (x:xs) ys + (score '-' y)]
 
 
@@ -68,13 +68,9 @@ maximaBy valueFcn xs = [a | a <- xs, valueFcn a == maxList] where
 -- 2d.
 -- returns a list of all optimal alignments between string1 and string2
 optAlignments :: String -> String -> [AlignmentType]
-optAlignments _ _ = []
--- optAlignments string1 string2 =
-
-opt :: String -> String -> [AlignmentType]
-opt [] _ = []
-opt _ [] = []   
-opt xs ys = maximaBy makeScore (optW xs ys)
+optAlignments [] _ = []
+optAlignments _ [] = []
+optAlignments xs ys = maximaBy makeScore (optW xs ys)
 
 optW :: String -> String -> [AlignmentType]
 optW [] [] = [("","")]
@@ -84,8 +80,8 @@ optW (x:xs) (y:ys) = concat [ attachHeads x   y (optW xs ys),
                               attachHeads '-' y (optW (x:xs) ys),
                               attachHeads x '-' (optW xs (y:ys))]
 
--- helper function to opt, calculates the score of two words 
-makeScore :: AlignmentType -> Int 
+-- helper function to opt, calculates the score of two words
+makeScore :: AlignmentType -> Int
 makeScore ([], _) = 0
 makeScore (_, []) = 0
 makeScore ((x:xs), (y:ys)) = score x y  + makeScore (xs, ys)
@@ -93,6 +89,13 @@ makeScore ((x:xs), (y:ys)) = score x y  + makeScore (xs, ys)
 -- 2e.
 -- should output to the screen in a readable fashion
 outputOptAlignments :: String -> String -> IO ()
-outputOptAlignments s1 s2 = putStrLn s1
+outputOptAlignments s1 s2 = do
+    let optAli = optAlignments s1 s2
+    putStrLn ("There are " ++ (show $ length optAli) ++ " optimal alignments:\n\n")
+    putStrLn (printAll optAli)
+    putStrLn ("There were " ++ (show $ length optAli) ++ " optimal alignments!")
+      where printAll optAli = foldl1 (++) (map printFormat optAli)
+printFormat :: AlignmentType -> String
+printFormat at = ((fst at) ++ "\n" ++ (snd at) ++ "\n\n")
 
 -------------------------------------------------------------------
