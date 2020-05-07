@@ -5,9 +5,14 @@
 -- Victor Winkelmann (and vi6253wi-s) --------------------------------------- --
 -- -------------------------------------------------------------------------- --
 
--- Which parts of your code / functions were the hardest to write and why?,
--- Which parts of your code / functions are you the most proud of,
+-- Which parts of your code / functions were the hardest to write and why?
+-- we thought that the hardest part of the code was the similarityScore functions
+-- i.e. fastSimilarityScore and similarityScore and the last fastOptAlignment. 
+-- It was hard because 
 
+-- Which parts of your code / functions are you the most proud of,
+fastSimilarityScore
+fastOptAlignment
 -- -------------------------------------------------------------------------- --
 
 module StringAlignment where
@@ -21,7 +26,13 @@ scoreMismatch = -1
 scoreSpace = -1
 string1 = "writers"
 string2 = "vintner"
---------------------------------------------------------------------------------
+
+long1 = "aferociousmonadatemyhamster" 
+long2 = "functionalprogrammingrules"
+
+longer1 = "bananrepubliksinvasionsarmestabsadjutant" 
+longer2 = "kontrabasfiolfodralmakarmästarlärling" 
+-- -------------------------------------------------------------------------- --
 
 -- Input: Two strings s and t, and values for scoreMatch, scoreMismatch,
 -- and scoreSpace.
@@ -78,7 +89,7 @@ optAlignments _ [] = []
 optAlignments xs ys = maximaBy makeScore (optW xs ys)
 
 optW :: String -> String -> [AlignmentType]
-optW [] [] = [("","")]
+optW [] [] = [("","")] 
 optW (x:xs) [] = attachHeads x '-' (optW xs [])
 optW [] (y:ys) = attachHeads '-' y (optW [] ys)
 optW (x:xs) (y:ys) = concat [ attachHeads x   y (optW xs ys),
@@ -113,5 +124,46 @@ type OptAlignmentType = (Int, [AlignmentType])
 -- need to optimise similarityScore and optAlignment
 
 fastSimilarityScore :: String -> String -> Int
+fastSimilarityScore s1 s2 = simScores (length s1) (length s2)
+    where 
+        simScores i j = simTable!!i!!j
+        simTable = [[simEntry i j | j<-[0..]] | i<-[0..]]
 
-fastOptAlignment :: String -> String -> OptAlignmentType
+        simEntry :: Int -> Int -> Int
+        simEntry i 0 = scoreSpace*i
+        simEntry 0 j = scoreSpace*j
+        simEntry i j = maximum [simScores (i-1) (j-1) + score c1 c2,
+                                simScores i (j-1)     + score c1 c2,
+                                simScores (i-1) j     + score c1 c2]
+            where 
+                c1 = s1!!(i-1)
+                c2 = s2!!(j-1)
+
+
+attachTails :: Int -> Char -> Char -> OptAlignmentType -> OptAlignmentType
+attachTails i c1 c2 optA =
+    (i + fst optA, map (addTail c1 c2) (snd optA))
+        where addTail ch1 ch2 at = ((fst at) ++ [ch1], (snd at) ++ [ch2]) 
+
+fastOptAlignment :: String -> String -> OptAlignmentType 
+fastOptAlignment [] _ = (0,[])
+fastOptAlignment _ [] = (0,[])
+fastOptAlignment s1 s2 = optList (length s1) (length s2)
+    where 
+        optList i j = optTable!!i!!j
+        optTable = [[optEntry i j | j<-[0..]] | i<-[0..]]
+
+        optEntry :: Int -> Int -> OptAlignmentType
+        optEntry 0 0 = (0,[("", "")])
+        optEntry 0 j = attachTails scoreSpace '-' (s2!!(j-1)) $ (optList 0 (j-1))
+        optEntry i 0 = attachTails scoreSpace (s1!!(i-1)) '-' $ (optList (i-1) 0)
+        optEntry i j = 
+            (maximum $ map fst alignments, concatMap snd $ maximaBy fst alignments)
+                where
+                    alignments = [
+                        attachTails (score c1 c2) c1 c2 (optList (i-1) (j-1)),
+                        attachTails scoreSpace '-' c2 (optList i (j-1)),
+                        attachTails scoreSpace c1 '-' (optList (i-1) j)
+                      ]
+                    c1 = s1!!(i-1)
+                    c2 = s2!!(j-1)
