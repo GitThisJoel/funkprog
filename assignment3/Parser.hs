@@ -22,13 +22,13 @@ m -# n = error "-# not implemented"
 (#-) :: Parser a -> Parser b -> Parser a
 m #- n = error "#- not implemented"
 
-spaces :: Parser String
-spaces =  error "spaces not implemented"
+spaces :: Parser String -- String -> Maybe (String, String)
+spaces = ((char ? isSpace) # iter (char ? isSpace) >-> cons)
 
 token :: Parser a -> Parser a
 token m = m #- spaces
 
-letter :: Parser Char
+letter :: Parser Char -- String -> Maybe (Char, String)
 letter = char ? isAlpha
 
 word :: Parser String
