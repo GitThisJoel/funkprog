@@ -23,7 +23,7 @@ m -# n = m # n >-> snd
 m #- n = m # n >-> fst
 
 spaces :: Parser String -- String -> Maybe (String, String)
-spaces = ((char ? isSpace) # iter (char ? isSpace) >-> cons)
+spaces = iter $ char ? isSpace
 
 token :: Parser a -> Parser a
 token m = m #- spaces
@@ -43,7 +43,7 @@ accept :: String -> Parser String
 accept w = (token (chars (length w))) ? (==w)
 
 require :: String -> Parser String -- String -> String -> Maybe
-require w = error "require not implemented"
+require w = accept w ! err ("Program error: expecting " ++ w)
 
 lit :: Char -> Parser Char
 lit c = token char ? (==c)
