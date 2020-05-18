@@ -29,7 +29,7 @@ data Statement = Assignment String Expr.T
 
 exprParse = (Expr.parse :: String -> Maybe (Expr.T, String))
 
-assignment, skip, begin, ifstm, while, readstm, write :: Parser Statement
+assignment, skip, begin, ifstm, while, readstm, write, comment :: Parser Statement
 assignment = word #- accept ":=" # Expr.parse #- require ";" >-> buildAss
 buildAss (v, e) = Assignment v e
 
@@ -51,8 +51,8 @@ buildRead w = Read w
 write = accept "write" -# Expr.parse #- require ";" >-> buildWrite
 buildWrite e = Write e
 
--- comment = accept "--" -# iter (char )
-
+comment = accept "--" -# iter (char ? (/= '\n'))  #- require "\n" >-> buildString 
+buildString s = Comment s
 
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 exec (Assignment var ex: stm) dict input = 
@@ -83,7 +83,10 @@ exec (Read s : stm) dict (x : input) =
 
 exec (Write ex : stm) dict input = 
     (Expr.value ex dict) : (exec stm dict input)
-     
+
+exec (Comment s : stm) dict input = 
+    exec (Skip : stm) dict input
+
 execMany :: [Statement] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 execMany [] _ _ = []
 execMany (stm:stms) dict input = 
