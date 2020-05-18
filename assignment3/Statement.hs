@@ -5,18 +5,6 @@ import qualified Dictionary
 import qualified Expr
 type T = Statement
 
-{- 
-    program ::= statements
-    statement ::= variable ':=' expr ';'
-        | 'skip' ';'
-        | 'begin' statements 'end'
-        | 'if' expr 'then' statement 'else' statement
-        | 'while' expr 'do' statement
-        | 'read' variable ';'
-        | 'write' expr ';'
-    statements ::= {statement}
-    variable ::= letter {letter}
--}
 data Statement = Assignment String Expr.T 
     | Skip 
     | Begin [Statement] 
@@ -92,6 +80,19 @@ execMany [] _ _ = []
 execMany (stm:stms) dict input = 
     (exec [stm] dict input) ++ (execMany stms dict input)
 
+indent n = (replicate (2 * n) ' ')
+
+shw :: Int -> T -> String 
+shw n (Assignment v e) = indent n ++ v ++ " := " ++ Expr.toString e ++ ";\n"
+shw n (Skip) = indent n ++ "skip;\n"
+shw n (Begin stms) = indent n ++ "begin\n" ++ concatMap (shw (n+1)) stms ++ indent n ++ "end"
+shw n (If cond thenStmts elseStmts) = 
+    indent n ++ "if " ++ Expr.toString cond ++ " then\n" ++ shw (n+1) thenStmts ++ indent n ++ "else\n" ++ shw (n+1) elseStmts
+shw n (While cond stms) = indent n ++ "while " ++ Expr.toString cond ++ " do\n" ++ shw (n+1) stms ++ "\n"
+shw n (Read s) = indent n ++ "read " ++ s ++ ";\n" 
+shw n (Write s) = indent n ++ "write " ++ toString s ++ ";\n"
+shw n (Comment s) = indent n ++ "--" ++ s ++ "\n"
+
 instance Parse Statement where
   parse = assignment ! skip ! begin ! ifstm ! while ! readstm ! write
-  toString = error "Statement.toString not implemented"
+  toString = shw 0
