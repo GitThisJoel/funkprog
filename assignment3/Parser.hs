@@ -1,6 +1,6 @@
 module Parser(module CoreParser, T, digit, digitVal, chars, letter, err,
               lit, number, iter, accept, require, token,
-              spaces, word, (-#), (#-)) where
+              spaces, word, (-#), (#-), dropComment) where
 import Prelude hiding (return, fail)
 import Data.Char
 import CoreParser
@@ -33,6 +33,9 @@ letter = char ? isAlpha
 
 word :: Parser String
 word = token (letter # iter letter >-> cons)
+
+dropComment :: Parser String 
+dropComment s = return (dropWhile (/= '\n') s) ""
 
 chars :: Int -> Parser String
 chars n

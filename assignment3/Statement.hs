@@ -24,8 +24,7 @@ buildAss (v, e) = Assignment v e
 skip = accept "skip" #- require ";" >-> buildSkip
 buildSkip _ = Skip
 
-begin = accept "begin" -# iter parse #- require "end" >-> buildBegin
-buildBegin stms = Begin stms
+begin = accept "begin" -# iter parse #- require "end" >-> Begin
 
 ifstm = accept "if" -# exprParse #- require "then" # parse #- require "else" # parse #- require ";" >-> buildIfstm
 buildIfstm ((ifstm1, ifsT), ifsF) = If ifstm1 ifsT ifsF
@@ -33,14 +32,11 @@ buildIfstm ((ifstm1, ifsT), ifsF) = If ifstm1 ifsT ifsF
 while = accept "while" -# exprParse #- require "do" # parse >-> buildWhile
 buildWhile (v, s) = While v s
 
-readstm = accept "read" -# word #- require ";" >-> buildRead
-buildRead w = Read w
+readstm = accept "read" -# word #- require ";" >-> Read
 
-write = accept "write" -# Expr.parse #- require ";" >-> buildWrite
-buildWrite e = Write e
+write = accept "write" -# Expr.parse #- require ";" >-> Write
 
-comment = accept "--" -# iter (char ? (/= '\n'))  #- require "\n" >-> buildString 
-buildString s = Comment s
+comment = accept "--" -# dropComment #- require "\n" >-> Comment 
 
 exec :: [T] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 exec (Assignment var ex: stm) dict input = 
@@ -73,7 +69,7 @@ exec (Write ex : stm) dict input =
     (Expr.value ex dict) : (exec stm dict input)
 
 exec (Comment s : stm) dict input = 
-    exec (Skip : stm) dict input
+    exec stm dict input
 
 execMany :: [Statement] -> Dictionary.T String Integer -> [Integer] -> [Integer]
 execMany [] _ _ = []
