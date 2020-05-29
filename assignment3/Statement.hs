@@ -26,7 +26,7 @@ buildSkip _ = Skip
 
 begin = accept "begin" -# iter parse #- require "end" >-> Begin
 
-ifstm = accept "if" -# exprParse #- require "then" # parse #- require "else" # parse #- require ";" >-> buildIfstm
+ifstm = accept "if" -# exprParse #- require "then" # parse #- require "else" # parse >-> buildIfstm
 buildIfstm ((ifstm1, ifsT), ifsF) = If ifstm1 ifsT ifsF
 
 while = accept "while" -# exprParse #- require "do" # parse >-> buildWhile
@@ -46,7 +46,7 @@ exec (Skip: stm) dict input =
     exec stm dict input
 
 exec (Begin stms: stm) dict input = 
-    execMany stms dict input
+    exec (stms ++ stm) dict input
 
 -- exec (Begin stm1: stm) =
 --     exec ((stm1 ++ stm) dict input)
@@ -66,15 +66,12 @@ exec (Read s : stm) dict (x : input) =
     exec stm (Dictionary.insert (s, x) $ dict) input
 
 exec (Write ex : stm) dict input = 
-    (Expr.value ex dict) : (exec stm dict input)
+    (Expr.value ex dict) : exec stm dict input
 
 exec (Comment s : stm) dict input = 
     exec stm dict input
 
-execMany :: [Statement] -> Dictionary.T String Integer -> [Integer] -> [Integer]
-execMany [] _ _ = []
-execMany (stm:stms) dict input = 
-    (exec [stm] dict input) ++ (execMany stms dict input)
+exec [] _ _ = []
 
 indent n = (replicate (2 * n) ' ')
 

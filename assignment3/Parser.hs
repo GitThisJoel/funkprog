@@ -23,10 +23,19 @@ m -# n = m # n >-> snd
 m #- n = m # n >-> fst
 
 spaces :: Parser String -- String -> Maybe (String, String)
-spaces = iter $ char ? isSpace
+spaces = iter (char ? isSpace)
+
+noEmpty :: Parser String 
+noEmpty = (char ? isSpace) # iter (char ? isSpace) >-> cons
+
+comment :: Parser String 
+comment = (chars 2 ? (== "--")) -# (iter (char ? (/='\n'))) #- require "\n"
+
+begoneCommentOrSpace :: Parser String 
+begoneCommentOrSpace = (iter (comment ! noEmpty)) >-> concat
 
 token :: Parser a -> Parser a
-token m = m #- spaces
+token m = m #- begoneCommentOrSpace
 
 letter :: Parser Char -- String -> Maybe (Char, String)
 letter = char ? isAlpha
