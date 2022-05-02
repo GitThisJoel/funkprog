@@ -1,0 +1,1 @@
+# Instudering för Funktionsprogrammering
